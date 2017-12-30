@@ -63,11 +63,11 @@ android {
         variant.outputs.each { output ->
             variant.outputs.all {
                 //定义apk名字
-//                def formatedDate = new Date().format("yyyyMMddHHmm")
+                def formatedDate = new Date().format("yyyyMMddHHmm")
                 def apkFileName = "app_" + productFlavors[0].name +
                         "_" + buildType.name +
                         "_v" + defaultConfig.versionName +
-                        "-${releaseTime()}.apk"
+                        "-" + formatedDate + ".apk"
                 outputFileName = apkFileName
             }
         }
