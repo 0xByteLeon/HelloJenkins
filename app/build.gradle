@@ -14,20 +14,76 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
+
+    //忽略警告信息
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    signingConfigs {
         release {
+            storeFile file(RELEASE_JKS_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
+    }
+
+
+    buildTypes {
+        debuge {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    flavorDimensions "env"
+    productFlavors {
+        Offline {
+            dimension "env"
+            applicationId "com.leon.hellojenkins.beta"
+            manifestPlaceholders = [app_name: "JenkinsTest", icon: "@mipmap/ic_launcher"]
+            resValue("string", "baseUrl", "xxxxxxx")
+        }
+        Online {
+            dimension "env"
+            applicationId "com.leon.hellojenkins.online"
+            manifestPlaceholders = [app_name: "Jenkins", icon: "@mipmap/ic_launcher"]
+            resValue("string", "baseUrl", "xxxxxxx")
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            variant.outputs.all {
+                //定义apk名字
+//                def formatedDate = new Date().format("yyyyMMddHHmm")
+                def apkFileName = "app_" + productFlavors[0].name +
+                        "_" + buildType.name +
+                        "_v" + defaultConfig.versionName +
+                        "-${releaseTime()}.apk"
+                outputFileName = apkFileName
+            }
         }
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:0.5'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
+
+def releaseTime() {
+    return new Date().format("yyyyMMdd_hh_mm_ss", TimeZone.getTimeZone("UTC"))
 }
