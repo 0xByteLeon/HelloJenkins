@@ -39,7 +39,7 @@ android {
         }
         release {
             signingConfig signingConfigs.release
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -84,6 +84,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
 
-def releaseTime() {
+static def releaseTime() {
     return new Date().format("yyyyMMdd_hh_mm_ss", TimeZone.getTimeZone("UTC"))
 }
